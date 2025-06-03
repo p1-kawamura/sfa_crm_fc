@@ -1,0 +1,157 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="icon" href="{% static 'whale.gif' %}">
+    <title>アラート設定表</title>
+</head>
+<body>
+
+    <div class="mt-3 mb-5">
+
+        <!-- メニュー -->
+        <div style="margin: 0 auto; width: 1100px">
+            {% include "sfa/menu.html" with act_user=act_user %}
+        </div>
+
+        <div style="margin: 0 auto; width: 1100px;">
+            <hr>
+            <div class="block_title">アラート設定表</div>
+            <hr>
+
+            <!-- フィルター -->
+            <div>
+                <form action="{% url 'crm:alert_search' %}" method="post">{% csrf_token %}                    
+                    <div class="flex mt-4">
+                        <div>対象月：</div>
+                        <div><input class="form-control" type="month" name="alert_month" value="{{alert_month}}"></div>
+                        <div style="margin-left: 20px;"><button type="submit" class="btn btn-secondary"><i class="bi bi-search"></i> 検索</button></div>
+                    </div>
+                </form>    
+            </div>
+            <hr>
+
+            <!-- 設定表 -->
+            <div>
+                {% for k,v in alert_dic.items %}
+                
+                    {% if k == today %}
+                    <div class="flex al_main" style="flex-wrap: nowrap; background-color: #ffff00;">
+                    {% else %}
+                    <div class="flex al_main" style="flex-wrap: nowrap;">
+                    {% endif %}
+
+                        {% if v.week_color == "1" %}
+                        <div style="width: 180px; color: blue;">
+                        {% elif v.week_color == "2" %}
+                        <div style="width: 180px; color: red;">
+                        {% else %}
+                        <div style="width: 180px;">
+                        {% endif %}
+                        {{k}}（{{v.week}}）
+                        </div>
+
+                        <div style="width: 100%;">
+                            {% for h in v.text_all %}
+
+                                <!-- 解除済みの場合 -->
+                                {% if h.check == 1 %}
+                                <div class="flex3 al_sub al_s2">
+                                    <div class="flex">
+                                        <div style="width: 40px;"><i class="bi bi-bell-slash-fill"></i></div>
+                                        <div style="width: 200px;">{% if h.cus.com %}{{h.cus.com | truncatechars:14}}{% endif %}</div>
+                                        <div style="width: 150px;">
+                                            {% if h.cus.sei %}{{h.cus.sei}}{% endif %}
+                                            {% if h.cus.mei %}{{h.cus.mei}}{% endif %}
+                                        </div>
+                                        <div style="width: 450px;">{{h.text}}</div>
+                                    </div>
+                                <!-- 現在設定中 -->
+                                {% else %}
+                                <div class="flex3 al_sub al_s1">
+                                    <div class="flex">
+                                        <div style="width: 40px;"><i class="bi bi-alarm"></i></div>
+                                        <div style="width: 200px;">{% if h.cus.com %}{{h.cus.com | truncatechars:14}}{% endif %}</div>
+                                        <div style="width: 150px;">
+                                            {% if h.cus.sei %}{{h.cus.sei}}{% endif %}
+                                            {% if h.cus.mei %}{{h.cus.mei}}{% endif %}
+                                        </div>
+                                        <div style="width: 450px; color: #ff0000;">{{h.text}}</div>
+                                    </div>
+                                {% endif %}
+   
+                                    <div style="width: 40px;">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" style="border-radius: 50%;"  id="modal_{{h.cus.cus_id}}" name="cus_list"
+                                            data-bs-toggle="modal" data-bs-target="#modal_cus">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!-- モーダル -->
+        {% include "sfa/modal_code.html" %}
+
+    </div>
+    
+
+    <!-- 各種Ajax -->
+    <script>
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i <cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+  
+        var csrftoken = getCookie('csrftoken');
+  
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+  
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+    </script>
+
+    <!-- モーダル_script -->
+    {% include "sfa/modal_script.html" %}
+    
+
+</body>
+</html>

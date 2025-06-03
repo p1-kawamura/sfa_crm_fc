@@ -1,0 +1,190 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="icon" href="{% static 'whale.gif' %}">
+    <title>顧客履歴</title>
+</head>
+<body>
+
+    <div class="mt-3 mb-5">
+
+        <!-- メニュー -->
+        <div style="margin: 0 auto; width: 1100px">
+            {% include "sfa/menu.html" with act_user=act_user %}
+        </div>
+
+        <div style="margin: 0 auto; width: 1100px;">
+            <hr>
+            <div class="block_title">顧客履歴</div>
+            <hr>
+
+            <!-- フィルター -->
+            <div>
+                <form action="{% url 'crm:history_search' %}" method="post">{% csrf_token %}                    
+                    <div class="flex mt-4">
+                        <div>対象期間：</div>
+                        <div><input class="form-control" type="date" name="his_st" value="{{ses.his_st}}"></div>
+                        <div style="margin-left: 10px;">～</div>
+                        <div style="margin-left: 10px;"><input class="form-control" type="date" name="his_ed" value="{{ses.his_ed}}"></div>
+                        <div style="margin-left: 20px;"><button type="submit" class="btn btn-secondary"><i class="bi bi-search"></i> 検索</button></div>
+                    </div>
+                </form>    
+            </div>
+            <hr>
+
+            <!-- 設定表 -->
+            <div style="margin-top: -50px;">
+                {% for i in cus_history %}
+                    <div>
+                        <!-- 顧客情報 -->
+                        <div class="flex his_main">
+                            <div style="width: 120px;;">
+                                <a href="{{i.cus.cus_url}}" target="_blank"><span style="color: #ff8484;"><i class="bi bi-box-arrow-up-right"></i></span></a>
+                                <span style="font-size: 0.9em;">{{i.cus.cus_id}}</span>
+                            </div>
+                            <div style="width: 250px;">{% if i.cus.com %}{{i.cus.com | truncatechars:14}}{% endif %}</div>
+                            <div style="width: 150px;">
+                                {% if i.cus.sei %}{{i.cus.sei}}{% endif %}
+                                {% if i.cus.mei %}{{i.cus.mei}}{% endif %}
+                            </div>
+                            <div style="width: 250px; font-size: 0.9em;">最終更新：{{i.cus.update_last_day}}</div>
+                            <div style="width: 100px; font-size: 0.9em;"">受注：{{i.cus.juchu_all}}件</div>
+                            <div style="width: 170px; font-size: 0.9em;"">金額：{{i.cus.juchu_money | intcomma}}円</div> 
+                            <div>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" style="border-radius: 50%;"  id="modal_{{i.cus.cus_id}}" name="cus_list"
+                                    data-bs-toggle="modal" data-bs-target="#modal_cus">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 履歴 -->
+                        <div style="margin-left: 50px; font-size: 0.9em;">
+                            {% for h in i.history %}
+
+                                <!-- 見積 -->
+                                {% if h.kubun == "est" %}
+                                <div class="flex his_sub">
+                                    <div style="width: 120px;">{{h.detail.make_day}}</div>
+
+                                    <div style="width: 120px;">
+                                        {% if h.detail.s_status == "見" %}
+                                            <span style="background-color: #ceffb7;">
+                                        {% elif h.detail.s_status == "イ" %}
+                                            <span style="background-color: #c8f7fd;">
+                                        {% elif h.detail.s_status == "受" %}
+                                            <span style="background-color: #fff9a7;">
+                                        {% elif h.detail.s_status == "発" %}
+                                            <span style="background-color: #dbbbff;">
+                                        {% elif h.detail.s_status == "キ" %}
+                                            <span style="background-color: #c5c5c5;">
+                                        {% elif h.detail.s_status == "終" %}
+                                            <span style="background-color: #ffbcbc;">
+                                        {% endif %}
+                                        {{h.detail.status}}</span> 
+                                    </div>
+
+                                    <div style="width: 150px;">
+                                        <a href="{{h.detail.mitsu_url}}" target="_blank"><span style="color: #008b8b;"><i class="bi bi-box-arrow-up-right"></i></span></a>
+                                        {{h.detail.mitsu_num}}-{{h.detail.mitsu_ver}}
+                                    </div>
+                                    <div style="width: 120px;">{{h.detail.order_kubun}}</div>
+                                    <div style="width: 130px;">{{h.detail.money | intcomma}}円</div>
+                                    <div style="width: 200px;">{% if h.detail.juchu_day %}受注：{{h.detail.juchu_day}}{% endif %}</div>
+                                    <div>{% if h.detail.hassou_day %}発送：{{h.detail.hassou_day}}{% endif %}</div>
+                                </div>
+
+                                <!-- コメント -->
+                                {% else %}
+                                <div class="flex his_sub">
+                                    <div style="width: 120px;">{{h.day}}</div>
+                                    <div style="width: 70px; margin-left: 5px;">
+                                        {% if h.type == 1 %}
+                                            <span style="color: blue; font-weight: bold;"><i class="bi bi-telephone-forward-fill"></i></span>
+                                        {% elif h.type == 2 %}
+                                            <span style="color: #ff9900; font-weight: bold;"><i class="bi bi-envelope-fill"></i></span>
+                                        {% elif h.type == 3 %}
+                                            <span style="color: #646565; font-weight: bold;"><i class="bi bi-clipboard-fill"></i></span>
+                                        {% elif h.type == 4 %}
+                                            <span style="color: #ff3502; font-weight: bold;"><i class="bi bi-shop"></i></span>
+                                        {% elif h.type == 5 %}
+                                            <span style="color: #00c2b8; font-weight: bold;"><i class="bi bi-people-fill"></i></span>
+                                        {% elif h.type == 6 %}
+                                            <span style="color: red; font-weight: bold;"><i class="bi bi-bell-fill"></i></span>
+                                        {% endif %}
+                                    </div>
+                                    <div>{{h.text}}</div>
+
+                                </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- モーダル -->
+        {% include "sfa/modal_code.html" %}
+
+    </div>
+    
+
+    <!-- 各種Ajax -->
+    <script>
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i <cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+  
+        var csrftoken = getCookie('csrftoken');
+  
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+  
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+    </script>
+
+    <!-- モーダル_script -->
+    {% include "sfa/modal_script.html" %}
+    
+
+</body>
+</html>

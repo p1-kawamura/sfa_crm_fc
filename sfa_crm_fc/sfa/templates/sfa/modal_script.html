@@ -1,0 +1,327 @@
+<script>
+
+    // 詳細モーダル
+    $("#modal_cus").on("show.bs.modal", function (event) {
+        var item=document.getElementsByName("cus_list");
+        for (var i=0; i<item.length; i++){
+            item[i].addEventListener("click",function(){
+                cus_id=this.id.replace("modal_","");
+                modal_all_clear()
+                $.ajax({
+                    'url': '{% url "sfa:cus_modal_show" %}',
+                    'type': 'POST',
+                    'data': {"cus_id":cus_id},
+                    'dataType': 'json'
+                })
+                .done(function(response){
+                    res=response.cus_info;
+                    res2=response.res_det;
+                    res3=response.alert;
+
+                    var pref=res.pref??"";
+                    var city=res.city??"";
+                    var address_1=res.address_1??"";
+                    var address_2=res.address_2??"";
+                    var sei=res.sei??"";
+                    var mei=res.mei??"";
+
+                    document.getElementById("modal_cus_id").innerText=cus_id;
+                    document.getElementById("modal_cus_url").innerHTML="<a href='" + res.cus_url + "' target='_blank'>" +
+                        "<span style='color: #ff8484;'><i class='bi bi-box-arrow-up-right'></i></span></a>";
+                    document.getElementById("modal_com").innerText=res.com;
+                    document.getElementById("modal_busho").innerText=res.com_busho;
+                    document.getElementById("modal_cus_name").innerText=sei + mei;
+                    document.getElementById("modal_address").innerText=pref + city + address_1 + address_2
+                    document.getElementById("modal_tel").innerText=res.tel;
+                    document.getElementById("modal_mob").innerText=res.tel_mob;
+                    document.getElementById("modal_mail").innerText=res.mail;
+                    document.getElementById("modal_touroku").innerText=res.cus_touroku;
+                    document.getElementById("modal_bikou").value=res.bikou;
+
+                    if (res3.set == 1){
+                        document.getElementById("modal_alert_show").style.display="flex";
+                        document.getElementById("modal_alert_text").innerText=res3.text;
+                        document.getElementById("modal_alert_num").innerText=res3.act_id;
+                        document.getElementById("modal_header").style.backgroundColor="#ffcccc";                            
+                    };
+                    
+                    modal_act_list(res2);
+                    modal_list_click();
+
+                })
+            },false)
+        };
+    });
+
+
+    // モーダル備考_決定ボタン
+    document.getElementById("modal_btn_bikou").addEventListener("click",function(){
+        var cus_id=document.getElementById("modal_cus_id").innerText;
+        var bikou=document.getElementById("modal_bikou").value;
+        $.ajax({
+            'url': '{% url "sfa:cus_modal_bikou" %}',
+            'type': 'POST',
+            'data': {
+                "cus_id":cus_id,
+                "bikou":bikou,
+            },
+            'dataType': 'json'
+        })
+        .done(function(response){
+            if (response.res == "ok"){
+                window.alert("備考内容を保存しました！");
+            } else {
+                window.alert("環境依存文字が含まれています！");
+            } 
+        })
+    })
+
+
+    // モーダルbot_決定ボタン
+    var icons=document.getElementsByName("icons");
+    for (var i=0; i<icons.length; i++){
+        icons[i].addEventListener("click",function(){
+            var num=this.id.replace("icon_","");
+            document.getElementById("modal_bot_type").value=num;
+        })
+    }
+
+
+    // モーダルbot_決定ボタン
+    document.getElementById("modal_btn_bot").addEventListener("click",function(){
+        if (document.getElementById("modal_bot_type").value == 0){
+            window.alert("種類を選択してください！");
+            return
+        }
+        $.ajax({
+            'url': '{% url "sfa:cus_modal_bot" %}',
+            'type': 'POST',
+            'data': {
+                "act_id":document.getElementById("act_id").innerText,
+                "cus_id":document.getElementById("modal_cus_id").innerText,
+                "day":document.getElementById("modal_bot_day").value,
+                "type":document.getElementById("modal_bot_type").value,
+                "text":document.getElementById("modal_bot_text").value,
+            },
+            'dataType': 'json'
+        })
+        .done(function(response){
+            res2=response.res_det;
+            if (res2 == "error"){
+                window.alert("環境依存文字が含まれています！");
+            } else {
+                modal_bot_clear();
+                modal_act_list(res2);
+                modal_list_click();
+            }
+        })
+    })
+    
+
+    // モーダルbot_新規作成
+    document.getElementById("modal_btn_bot_new").addEventListener("click",function(){
+        modal_bot_clear();
+    })
+
+
+    // モーダルbot_削除
+    document.getElementById("modal_btn_bot_del").addEventListener("click",function(){
+        var act_id=document.getElementById("act_id").innerText;
+        var cus_id=document.getElementById("modal_cus_id").innerText;
+        if (act_id == ""){
+            window.alert("削除する対象を選択してください！");
+            return
+        }
+        var ans =confirm("本当に削除しますか？");
+        if (ans == false){
+            return
+        }
+        $.ajax({
+            'url': '{% url "sfa:cus_modal_bot_del" %}',
+            'type': 'POST',
+            'data': {
+                "act_id":act_id,
+                "cus_id":cus_id,
+            },
+            'dataType': 'json'
+        })
+        .done(function(response){
+            res2=response.res_det;
+            modal_bot_clear();
+            modal_act_list(res2);
+            modal_list_click();
+        })
+    })
+
+
+    // モーダルの表示順
+    var mo_sort = document.getElementById("modal_sort");
+    mo_sort.addEventListener("change",function(){
+        $.ajax({
+            'url': '{% url "sfa:cus_modal_sort" %}',
+            'type': 'POST',
+            'data': {
+                "jun":mo_sort.value,
+                "cus_id":document.getElementById("modal_cus_id").innerText,
+            },
+            'dataType': 'json'
+        })
+        .done(function(response){
+            res2=response.res_det;
+            modal_act_list(res2);
+            modal_list_click();
+        })
+    })
+
+
+    // モーダル_アラート解除
+    document.getElementById("modal_alert_check").addEventListener("click",function(){
+        $.ajax({
+                'url': '{% url "sfa:modal_alert_check" %}',
+                'type': 'POST',
+                'data': {
+                    "alert_num":document.getElementById("modal_alert_num").innerText
+                },
+                'dataType': 'json'
+            })
+            .done(function(response){
+                document.getElementById("modal_alert_show").style.display="none";
+                document.getElementById("modal_alert_num").innerText="";
+                document.getElementById("modal_alert_text").innerText="";
+                document.getElementById("modal_header").style.backgroundColor=""; 
+            })
+    });
+
+
+    // モーダル終了
+    btns=document.getElementsByName("modal_btn_close");
+    for (var i=0;i<btns.length;i++){
+        btns[i].addEventListener("click",function(){
+            window.location.reload();
+        })
+    };
+
+
+    // FUNC モーダル全クリア
+    function modal_all_clear(){
+        var now = new Date();
+        document.getElementById("modal_cus_id").innerText="";
+        document.getElementById("modal_com").innerText="";
+        document.getElementById("modal_busho").innerText="";
+        document.getElementById("modal_cus_name").innerText="";
+        document.getElementById("modal_address").innerText=""
+        document.getElementById("modal_tel").innerText="";
+        document.getElementById("modal_mob").innerText="";
+        document.getElementById("modal_mail").innerText="";
+        document.getElementById("modal_touroku").innerText="";
+        document.getElementById("modal_bikou").value="";
+        document.getElementById("modal_bot_type").value="0";
+        document.getElementById("modal_bot_day").value=now.toLocaleDateString('sv-SE');
+        document.getElementById("modal_bot_text").value="";
+        document.getElementById("act_id").innerText="";
+        document.getElementById("modal_cus_action").innerHTML=""
+        document.getElementById("modal_alert_show").style.display="none";
+        document.getElementById("modal_alert_text").innerText="";
+        document.getElementById("modal_alert_num").innerText="";
+        document.getElementById("modal_header").style.backgroundColor=""; 
+    }
+
+
+    // FUNC モーダルbot_クリア
+    function modal_bot_clear(){
+        var now = new Date();
+        document.getElementById("modal_bot_type").value="0";
+        document.getElementById("modal_bot_day").value=now.toLocaleDateString('sv-SE');
+        document.getElementById("modal_bot_text").value="";
+        document.getElementById("act_id").innerText="";
+    }
+
+
+    // FUNC モーダル履歴リスト
+    function modal_act_list(res2){
+        var str = "";
+        var last_str = "";
+        for (var i of res2){
+            if (i.kubun == "est"){
+                str="<div class='flex'>" +
+                    "<div>" + i.day + "</div>" + 
+                    "<div style='margin-left: 20px;'>" + i.est_num + "</div>" +
+                    "<div style='margin-left: 20px;'>" + i.status + "</div>" +
+                    "<div style='margin-left: 20px;'>" + i.money.toLocaleString() + "円</div>" +
+                    "<div style='margin-left: 10px; font-size: 0.9em'>（"  + i.tantou + "）</div>" +
+                    "</div>";
+            } else {
+                var icon = "";
+                var text = "";
+                // アイコン
+                if (i.type == 1){
+                    icon="<span style='color: blue; font-weight: bold;'><i class='bi bi-telephone-forward-fill'></i></span>";
+                } else if (i.type == 2){
+                    icon="<span style='color: #ff9900; font-weight: bold;'><i class='bi bi-envelope-fill'></i></span>";
+                } else if (i.type == 3){
+                    icon="<span style='color: #646565; font-weight: bold;'><i class='bi bi-clipboard-fill'></i></span>";
+                } else if (i.type == 4){
+                    icon="<span style='color: #ff3502; font-weight: bold;'><i class='bi bi-shop'></i></span>";
+                } else if (i.type == 5){
+                    icon="<span style='color: #00c2b8; font-weight: bold;'><i class='bi bi-people-fill'></i></span>";
+                } else if (i.type == 6){
+                    icon="<span style='color: red; font-weight: bold;'><i class='bi bi-bell-fill'></i></span>";
+                };
+                text=i.text;
+                str="<div class='flex'>" +
+                    "<div>" + i.day + "</div>" +
+                    "<div style='margin-left: 10px;'>" + icon + "</div>" +
+                    "<div style='margin-left: 10px;'>" + text + "</div>" +
+                    "</div>";
+            };
+            
+            // カード形式
+            if (i.kubun == "est"){
+                if (i.status == "見積送信"){
+                    str = "<div class='main_0 main_1'>" + str + "</div>";
+                } else if (i.status == "イメージ"){
+                    str = "<div class='main_0 main_2'>" + str + "</div>";
+                } else if (i.status == "受注"){
+                    str = "<div class='main_0 main_3'>" + str + "</div>";
+                } else if (i.status == "発送完了"){
+                    str = "<div class='main_0 main_4'>" + str + "</div>";
+                } else if (i.status == "終了"){
+                    str = "<div class='main_0 main_5'>" + str + "</div>";
+                }
+            } else {
+                str = "<div class='main_0 main_all' name='act_list' id='" + i.act_id + "'>" + str + "</div>";
+            };
+
+            last_str = last_str + str;
+        };
+        document.getElementById("modal_cus_action").innerHTML=last_str;
+    }
+
+
+    // FUNC モーダル_リストクリック
+    function modal_list_click(){
+        var item=document.getElementsByName("act_list");
+        for (var i=0; i<item.length; i++){
+            item[i].addEventListener("click",function(){
+                document.getElementById("act_id").innerText=this.id;
+                $.ajax({
+                    'url': '{% url "sfa:cus_modal_list_click" %}',
+                    'type': 'POST',
+                    'data': {"act_id":this.id},
+                    'dataType': 'json'
+                })
+                .done(function(response){
+                    res=response.res;
+                    document.getElementById("modal_bot_day").value=res.day;
+                    document.getElementById("modal_bot_type").value=res.type;
+                    document.getElementById("modal_bot_text").value=res.text;
+                })
+            },false)
+        };
+    }
+
+</script>
+
+
+<!-- モーダル用 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>

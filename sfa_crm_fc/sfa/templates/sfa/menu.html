@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メニュー</title>
+
+</head>
+<body>
+
+    <div class="flex3" style="align-items: center;">
+        <div class="flex">
+            <div>
+                <a href="https://core-sys.p1-intl.co.jp/login/" target="_blank"><img src="{% static 'logo.png' %}"></a>
+            </div>
+            <div style="margin-left: 30px;">
+                <a href="{% url 'sfa:index' %}"><button class="btn btn-outline-dark"><i class="bi bi-clipboard-check"></i> 案件管理一覧</button></a>
+            </div>
+            <div style="margin-left: 30px;">
+                <a href="{% url 'crm:alert_index' %}"><button class="btn btn-outline-dark"><i class="bi bi-alarm"></i> アラート設定表</button></a>
+            </div>
+            <div style="margin-left: 30px;">
+                <a href="{% url 'crm:history_index' %}"><button class="btn btn-outline-dark"><i class="bi bi-person-circle"></i> 顧客履歴</button></a>
+            </div><div style="margin-left: 30px;">
+                <a href="{% url 'sfa:hidden_index' %}"><button class="btn btn-outline-dark"><i class="bi bi-x-square"></i> 非表示一覧</button></a>
+            </div>
+        </div>
+        <div class="flex" style="align-items: end;">
+            <div title="ログアウト"><a href="{% url 'sfa:logout' %}"><img src="{% static 'whale.gif' %}"></a></div>
+            <div style="margin-left: 10px;">{{act_user}}</div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+
