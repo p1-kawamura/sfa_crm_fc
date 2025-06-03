@@ -114,19 +114,11 @@ def index_api(request):
                 "tel_mob":res2["mobilePhone"],
                 "tel_mob_search":tel_mob_search,
                 "mail":res2["contactEmail"],
-                "mitsu_all":res2["totalEstimations"],
                 "juchu_all":res2["totalReceivedOrders"],
                 "juchu_money":res2["totalReceivedOrdersPrice"],
-                "mitsu_last":res2["lastEstimatedAt"],
-                "juchu_last":res2["lastOrderReceivedDate"],
                 "update_last_day":update_last_day,
                 "update_last_num":update_last_num,
                 "update_last_ver":update_last_ver,
-                "mitsu_last_busho_id":res2["lastHandledDepartmentId"],
-                "mitsu_last_busho":res2["lastHandledDepartmentName"],
-                "mitsu_last_tantou_id":res2["lastHandledId"],
-                "mitsu_last_tantou":res2["lastHandledName"],
-                "taimen":res2["isVisited"],
                 }
             )
 
