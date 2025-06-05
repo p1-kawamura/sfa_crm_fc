@@ -129,3 +129,7 @@ LOGOUT_REDIRECT_URL = 'sfa:login'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ※FCサーバー起動
+# waitress-serve --listen=192.168.91.74:8000 --threads 20 sfa_crm.wsgi:application
