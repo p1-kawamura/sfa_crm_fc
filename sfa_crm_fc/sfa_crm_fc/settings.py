@@ -132,4 +132,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ※FCサーバー起動
-# waitress-serve --listen=192.168.91.80:8000 --threads 20 sfa_crm.wsgi:application
+# waitress-serve --listen=192.168.91.80:8000 --threads 20 sfa_crm_fc.wsgi:application
