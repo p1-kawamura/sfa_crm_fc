@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import index_api,index,sfa_search,open_eye,show_hidden,cus_modal_show,cus_modal_bikou,cus_modal_bot,cus_modal_list_click, \
                     cus_modal_bot_del,cus_modal_sort,modal_alert_check,hidden_index,hidden_search,hidden_to_show,\
-                    sfa_page_prev,sfa_page_first,sfa_page_next,sfa_page_last,free
+                    sfa_page_prev,sfa_page_first,sfa_page_next,sfa_page_last,member_index,member_add,free
                     
 
 
@@ -30,5 +30,7 @@ urlpatterns = [
     path('hidden_index/', hidden_index, name="hidden_index"),
     path('hidden_search/', hidden_search, name="hidden_search"),
     path('hidden_to_show/', hidden_to_show, name="hidden_to_show"),
+    path('member_index/', member_index, name="member_index"),
+    path('member_add/', member_add, name="member_add"),
     path('free/', free, name="free"),
 ]

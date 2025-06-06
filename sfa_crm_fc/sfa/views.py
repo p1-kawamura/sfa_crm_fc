@@ -159,7 +159,7 @@ def index(request):
     # ユーザー情報
     busho_id=request.user.username
     tantou_id=request.session["tantou_id"]
-    busho_name=Member.objects.filter(busho_id=busho_id)[0].busho
+    # busho_name=Member.objects.filter(busho_id=busho_id)[0].busho
     request.session["busho_id"]=busho_id
 
     # アクティブ担当
@@ -260,7 +260,7 @@ def index(request):
     params={
         "tantou_id":tantou_id,
         "sfa_list":sfa_list,
-        "busho_name":busho_name,
+        # "busho_name":busho_name,
         "tantou_list":tantou_list,
         "ses":ses,
         "modal_sort":modal_sort,
@@ -550,6 +550,37 @@ def hidden_to_show(request):
         ins.save()
     d={}
     return JsonResponse(d)
+
+
+# 担当者設定_一覧
+def member_index(request):
+    ins=Member.objects.all().order_by("busho_id","id")
+
+    # アクティブ担当
+    act_id=request.session["tantou_id"]
+    if act_id=="":
+        act_user="担当者が未設定です"
+    else:
+        act_user=Member.objects.get(tantou_id=act_id).busho + "：" + Member.objects.get(tantou_id=act_id).tantou
+        
+    return render(request,"sfa/member.html",{"list":ins,"act_user":act_user})
+
+
+# 担当者設定_追加
+def member_add(request):
+    busho=request.POST["busho"]
+    busho_id=request.POST["busho_id"]
+    tantou=request.POST["tantou"]
+    tantou_id=request.POST["tantou_id"]
+    last_api=request.POST["last_api"] + " 00:00:00"
+    if Member.objects.filter(tantou_id=tantou_id).count() >0:
+        ans="no"
+    else:
+        Member.objects.create(busho=busho,busho_id=busho_id,tantou=tantou,tantou_id=tantou_id,last_api=last_api)
+        ans="yes"
+    ins=Member.objects.all().order_by("busho_id","id")
+
+    return render(request,"sfa/member.html",{"ans":ans,"list":ins})
 
 
 
