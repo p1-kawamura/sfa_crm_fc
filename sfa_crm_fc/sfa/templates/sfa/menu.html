@@ -27,8 +27,12 @@
             </div>
         </div>
         <div class="flex" style="align-items: end;">
-            <div title="ログアウト"><a href="{% url 'sfa:logout' %}"><img src="{% static 'whale.gif' %}"></a></div>
-            <div style="margin-left: 10px;">{{act_user}}</div>
+            <div title="ログアウト">
+                <form action="{% url 'sfa:logout' %}" method="post">{% csrf_token %}
+                    <button class="btn" type="submit"><img src="{% static 'whale.gif' %}"></button>
+                </form>
+            </div>
+            <div>{{act_user}}</div>
         </div>
     </div>
 
