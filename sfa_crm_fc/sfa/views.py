@@ -159,7 +159,7 @@ def index(request):
     # ユーザー情報
     busho_id=request.user.username
     tantou_id=request.session["tantou_id"]
-    # busho_name=Member.objects.filter(busho_id=busho_id)[0].busho
+    busho_name=Member.objects.filter(busho_id=busho_id)[0].busho
     request.session["busho_id"]=busho_id
 
     # アクティブ担当
@@ -254,13 +254,13 @@ def index(request):
     sfa_list=sfa_list[(num-1)*30 : num*30]
 
     # その他情報
-    tantou_list=Member.objects.filter(busho_id=busho_id)
+    tantou_list=Member.objects.filter(busho_id=busho_id).order_by("tantou_id")
     modal_sort=request.session["modal_sort"]
 
     params={
         "tantou_id":tantou_id,
         "sfa_list":sfa_list,
-        # "busho_name":busho_name,
+        "busho_name":busho_name,
         "tantou_list":tantou_list,
         "ses":ses,
         "modal_sort":modal_sort,
@@ -554,14 +554,14 @@ def hidden_to_show(request):
 
 # 担当者設定_一覧
 def member_index(request):
-    ins=Member.objects.all().order_by("busho_id","id")
+    ins=Member.objects.all().order_by("busho_id","tantou_id")
 
     # アクティブ担当
-    act_id=request.session["tantou_id"]
-    if act_id=="":
+    tantou_id=request.session["tantou_id"]
+    if tantou_id=="":
         act_user="担当者が未設定です"
     else:
-        act_user=Member.objects.get(tantou_id=act_id).busho + "：" + Member.objects.get(tantou_id=act_id).tantou
+        act_user=Member.objects.get(tantou_id=tantou_id).tantou
         
     return render(request,"sfa/member.html",{"list":ins,"act_user":act_user})
 
@@ -601,8 +601,8 @@ def free(request):
     #     i.show=0
     #     i.save()
 
-    # Sfa_data.objects.all().delete()
-    # Customer.objects.all().delete()
+    Sfa_data.objects.all().delete()
+    Customer.objects.all().delete()
     Crm_action.objects.all().delete()
 
     return redirect("sfa:index")
