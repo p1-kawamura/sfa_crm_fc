@@ -18,6 +18,12 @@ def index_api(request):
 
     if tantou_id != "":
         
+        # 操作者
+        sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+        print(sousa_time,sousa_busho,sousa_tantou,"■ API接続")
+
         last_api=Member.objects.get(tantou_id=tantou_id).last_api
         url="https://core-sys.p1-intl.co.jp/p1web/v1/estimations/?handledById=" + tantou_id + "&updatedAtFrom=" + last_api
         res=requests.get(url)
@@ -279,6 +285,14 @@ def sfa_search(request):
     request.session["search"]["cus_sei"]=request.POST["cus_sei"]
     request.session["search"]["cus_mei"]=request.POST["cus_mei"]
     request.session["search"]["page_num"]=1
+
+    # 操作者
+    tantou_id=request.POST["tantou_id"]
+    sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+    sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+    print(sousa_time,sousa_busho,sousa_tantou,"■ 案件表示")
+    
     return redirect("sfa:index")
 
 
@@ -521,6 +535,15 @@ def hidden_index(request):
         act_user="担当者が未設定です"
     else:
         act_user=Member.objects.get(tantou_id=tantou_id).tantou
+
+    # 操作者
+    sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+        print(sousa_time,sousa_busho,sousa_tantou,"■ 非表示一覧")
+    except:
+        print(sousa_time,"担当不明","■ 非表示一覧")
 
     params={
         "list":ins,

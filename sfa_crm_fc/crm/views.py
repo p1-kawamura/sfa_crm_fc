@@ -61,6 +61,15 @@ def alert_index(request):
     else:
         act_user=Member.objects.get(tantou_id=tantou_id).tantou
 
+    # 操作者
+    sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+        print(sousa_time,sousa_busho,sousa_tantou,"■ アラート設定表")
+    except:
+        print(sousa_time,"担当不明","■ アラート設定表")
+
     params={
         "alert_month":alert_month,
         "act_user":act_user,
@@ -152,6 +161,15 @@ def history_index(request):
         act_user="担当者が未設定です"
     else:
         act_user=Member.objects.get(tantou_id=tantou_id).tantou
+
+    # 操作者
+    sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+        print(sousa_time,sousa_busho,sousa_tantou,"■ 顧客履歴")
+    except:
+        print(sousa_time,"担当不明","■ 顧客履歴")
 
     params={
         "cus_history":cus_history,
