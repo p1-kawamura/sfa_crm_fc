@@ -155,6 +155,8 @@ def index(request):
         request.session["search"]["cus_sei"]=""
     if "cus_mei" not in request.session["search"]:
         request.session["search"]["cus_mei"]=""
+    if "mitsu_num" not in request.session["search"]:
+        request.session["search"]["mitsu_num"]=""
     if "page_num" not in request.session["search"]:
         request.session["search"]["page_num"]=1
     if "all_page_num" not in request.session["search"]:
@@ -184,6 +186,9 @@ def index(request):
     if ses["cus_mei"] != "":
         flag=True
         fil["mei__contains"]=ses["cus_mei"].strip()
+    if ses["mitsu_num"] != "":
+        flag=True
+        fil["mitsu_num"]=ses["mitsu_num"].strip()
     
     ins=Sfa_data.objects.filter(**fil)
     sfa_list=[]
@@ -285,6 +290,7 @@ def sfa_search(request):
     request.session["search"]["com"]=request.POST["com"]
     request.session["search"]["cus_sei"]=request.POST["cus_sei"]
     request.session["search"]["cus_mei"]=request.POST["cus_mei"]
+    request.session["search"]["mitsu_num"]=request.POST["mitsu_num"]
     request.session["search"]["page_num"]=1
 
     # 操作者
