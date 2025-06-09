@@ -5,6 +5,7 @@ from django.contrib.admin import ModelAdmin
 class A_Sfa_data(ModelAdmin):
     model=Sfa_data
     list_display = ["tantou_id","mitsu_num","mitsu_ver","sei","mei","juchu_day"]
+    search_fields=["mitsu_num",]
 
 class A_Member(ModelAdmin):
     model=Member
