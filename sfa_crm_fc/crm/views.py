@@ -55,20 +55,13 @@ def alert_index(request):
             dic={"text":i.text,"check":i.alert_check,"cus":cus}
             alert_dic[i.day]["text_all"].append(dic)
     
-    # アクティブ担当
-    if tantou_id=="":
-        act_user="担当者が未設定です"
-    else:
-        act_user=Member.objects.get(tantou_id=tantou_id).tantou
-
     # 操作者
     sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    try:
-        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
-        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
-        print(sousa_time,sousa_busho,sousa_tantou,"■ アラート設定表")
-    except:
-        print(sousa_time,"担当不明","■ アラート設定表")
+    sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+    sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+    act_user=Member.objects.get(tantou_id=tantou_id).tantou
+    print(sousa_time,sousa_busho,sousa_tantou,"■ アラート設定表")
+
 
     params={
         "alert_month":alert_month,
@@ -154,22 +147,15 @@ def history_index(request):
         res_det=sorted(res_det,key=lambda x: x["day"], reverse=True)
 
         cus_history.append({"cus":cus_det,"history":res_det})
-
-
-    # アクティブ担当
-    if tantou_id=="":
-        act_user="担当者が未設定です"
-    else:
-        act_user=Member.objects.get(tantou_id=tantou_id).tantou
+  
 
     # 操作者
     sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    try:
-        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
-        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
-        print(sousa_time,sousa_busho,sousa_tantou,"■ 顧客履歴")
-    except:
-        print(sousa_time,"担当不明","■ 顧客履歴")
+    sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+    sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+    act_user=Member.objects.get(tantou_id=tantou_id).tantou
+    print(sousa_time,sousa_busho,sousa_tantou,"■ 顧客履歴")
+    
 
     params={
         "cus_history":cus_history,

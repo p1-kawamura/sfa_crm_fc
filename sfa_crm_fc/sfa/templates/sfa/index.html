@@ -62,7 +62,9 @@
                             </div>
                         </div>
                         <div>
+                            {% if act_user != "担当者が未設定です" %}
                             <button class="btn btn-danger" id="api_reload"><i class="bi bi-arrow-repeat"></i> データ取得</button>
+                            {% endif %}
                         </div>
                     </div>
                     

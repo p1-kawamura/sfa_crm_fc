@@ -24,6 +24,7 @@ def index_api(request):
         sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
         print(sousa_time,sousa_busho,sousa_tantou,"■ API接続")
 
+
         last_api=Member.objects.get(tantou_id=tantou_id).last_api
         url="https://core-sys.p1-intl.co.jp/p1web/v1/estimations/?handledById=" + tantou_id + "&updatedAtFrom=" + last_api
         res=requests.get(url)
@@ -168,12 +169,6 @@ def index(request):
     busho_name=Member.objects.filter(busho_id=busho_id)[0].busho
     request.session["busho_id"]=busho_id
 
-    # アクティブ担当
-    if tantou_id=="":
-        act_user="担当者が未設定です"
-    else:
-        act_user=Member.objects.get(tantou_id=tantou_id).tantou
-
     # フィルター
     fil={}
     fil["show"]=0
@@ -262,6 +257,12 @@ def index(request):
     # その他情報
     tantou_list=Member.objects.filter(busho_id=busho_id).order_by("tantou_id")
     modal_sort=request.session["modal_sort"]
+
+    # アクティブ担当
+    if tantou_id=="":
+        act_user="担当者が未設定です"
+    else:
+        act_user=Member.objects.get(tantou_id=tantou_id).tantou
 
     params={
         "tantou_id":tantou_id,
@@ -528,22 +529,15 @@ def hidden_index(request):
     if ses["cus_mei"] != "":
         fil["mei__contains"]=ses["cus_mei"].strip()
     
-    ins=Sfa_data.objects.filter(**fil).order_by("hidden_day").reverse()[:300] #直近300件
+    ins=Sfa_data.objects.filter(**fil).order_by("hidden_day").reverse()[:300] #直近300件    
 
-    # アクティブ担当
-    if tantou_id=="":
-        act_user="担当者が未設定です"
-    else:
-        act_user=Member.objects.get(tantou_id=tantou_id).tantou
 
     # 操作者
     sousa_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    try:
-        sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
-        sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
-        print(sousa_time,sousa_busho,sousa_tantou,"■ 非表示一覧")
-    except:
-        print(sousa_time,"担当不明","■ 非表示一覧")
+    sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
+    sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
+    act_user=Member.objects.get(tantou_id=tantou_id).tantou
+    print(sousa_time,sousa_busho,sousa_tantou,"■ 非表示一覧")
 
     params={
         "list":ins,
