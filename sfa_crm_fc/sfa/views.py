@@ -331,6 +331,12 @@ def show_hidden(request):
 def cus_modal_show(request):
     cus_id=request.POST.get("cus_id")
     cus_info=list(Customer.objects.filter(cus_id=cus_id).values())[0]
+
+    url="https://core-sys.p1-intl.co.jp/p1web/v1/customers/" + cus_id
+    res=requests.get(url)
+    res=res.json()
+    cus_info["remark"]=res["remark"]
+    
     today=str(date.today())
     ins=list(Crm_action.objects.filter(cus_id=cus_id,type=6,alert_check=0,day__lte=today).values())
     if len(ins)>0:
@@ -345,19 +351,15 @@ def cus_modal_show(request):
     return JsonResponse(d)
 
 
-
 # モーダルの備考内容
 def cus_modal_bikou(request):
     cus_id=request.POST.get("cus_id")
     bikou=request.POST.get("bikou")
-    ins=Customer.objects.get(cus_id=cus_id)
-    try:
-        ins.bikou=bikou
-        ins.save()
-        res="ok"
-    except:
-        res="error"
-    d={"res":res}
+    data={"remark":bikou}
+    data=json.dumps(data)
+    url="https://core-sys.p1-intl.co.jp/p1web/v1/customers/" + cus_id + "/remark"
+    requests.put(url,data=data)
+    d={}
     return JsonResponse(d)
 
 

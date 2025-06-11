@@ -36,7 +36,7 @@
                     document.getElementById("modal_mob").innerText=res.tel_mob;
                     document.getElementById("modal_mail").innerText=res.mail;
                     document.getElementById("modal_touroku").innerText=res.cus_touroku;
-                    document.getElementById("modal_bikou").value=res.bikou;
+                    document.getElementById("modal_bikou").value=res.remark;
 
                     if (res3.set == 1){
                         document.getElementById("modal_alert_show").style.display="flex";
@@ -68,11 +68,7 @@
             'dataType': 'json'
         })
         .done(function(response){
-            if (response.res == "ok"){
-                window.alert("備考内容を保存しました！");
-            } else {
-                window.alert("環境依存文字が含まれています！");
-            } 
+            window.alert("更新しました！");
         })
     })
 
