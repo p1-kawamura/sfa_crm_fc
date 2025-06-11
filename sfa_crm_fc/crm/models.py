@@ -22,7 +22,6 @@ class Customer(models.Model):
     update_last_day=models.CharField("最終更新日",max_length=255,blank=True,null=True)
     update_last_num=models.CharField("最終更新_見積番号",max_length=255,blank=True,null=True)
     update_last_ver=models.CharField("最終更新_バージョン",max_length=255,blank=True,null=True)
-    bikou=models.TextField("備考",blank=True)
 
     def __str__(self):
         return self.cus_id
