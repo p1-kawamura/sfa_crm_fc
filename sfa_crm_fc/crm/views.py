@@ -156,7 +156,7 @@ def contact_index(request):
     sousa_busho=Member.objects.get(tantou_id=tantou_id).busho
     sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
     act_user=Member.objects.get(tantou_id=tantou_id).tantou
-    # print(sousa_time,sousa_busho,sousa_tantou,"■ 顧客最終履歴")
+    print(sousa_time,sousa_busho,sousa_tantou,"■ 顧客最終履歴")
 
 
     params={
