@@ -24,28 +24,7 @@ def alert_index(request):
         request.session["alert_month"]=datetime.datetime.now().strftime("%Y-%m")
 
     alert_month=request.session["alert_month"]
-    y=int(alert_month[:4])
-    m=int(alert_month[-2:])
-
-    ins=calendar.monthrange(y,m)
-    last_day=ins[1]
-
-    alert_dic={}
-    we_dic={0:"月",1:"火",2:"水",3:"木",4:"金",5:"土",6:"日",}
-    for i in range(1,last_day+1):
-        day=datetime.date(y,m,i)
-        week=we_dic[day.weekday()]
-
-        if jpholiday.is_holiday(day):
-            week_color="2"
-        elif week == "土":
-            week_color="1"
-        elif week == "日":
-            week_color="2"
-        else:
-            week_color="0"
-
-        alert_dic[day.strftime("%Y-%m-%d")]={"week":week,"week_color":week_color,"text_all":[]}
+    alert_dic=make_dic(alert_month)
 
     tantou_id=request.session["tantou_id"]
     ins=Crm_action.objects.filter(tantou_id=tantou_id,type=6)
@@ -61,7 +40,6 @@ def alert_index(request):
     sousa_tantou=Member.objects.get(tantou_id=tantou_id).tantou
     act_user=Member.objects.get(tantou_id=tantou_id).tantou
     print(sousa_time,sousa_busho,sousa_tantou,"■ アラート設定表")
-
 
     params={
         "alert_month":alert_month,
@@ -80,6 +58,7 @@ def alert_search(request):
     return redirect("crm:alert_index")
 
 
+
 # 顧客最終履歴
 @login_required
 def contact_index(request):
@@ -87,28 +66,7 @@ def contact_index(request):
         request.session["contact_month"]=datetime.datetime.now().strftime("%Y-%m")
 
     contact_month=request.session["contact_month"]
-    y=int(contact_month[:4])
-    m=int(contact_month[-2:])
-
-    ins=calendar.monthrange(y,m)
-    last_day=ins[1]
-
-    contact_dic={}
-    we_dic={0:"月",1:"火",2:"水",3:"木",4:"金",5:"土",6:"日",}
-    for i in range(1,last_day+1):
-        day=datetime.date(y,m,i)
-        week=we_dic[day.weekday()]
-
-        if jpholiday.is_holiday(day):
-            week_color="2"
-        elif week == "土":
-            week_color="1"
-        elif week == "日":
-            week_color="2"
-        else:
-            week_color="0"
-
-        contact_dic[day.strftime("%Y-%m-%d")]={"week":week,"week_color":week_color,"text_all":[]}
+    contact_dic=make_dic(contact_month)
 
     tantou_id=request.session["tantou_id"]
     cus_act=set(Crm_action.objects.filter(tantou_id=tantou_id,type__in=[1,2,4,5]).values_list("cus_id",flat=True).order_by("cus_id").distinct())
@@ -173,3 +131,30 @@ def contact_search(request):
     request.session["contact_month"]=request.POST["contact_month"]
     return redirect("crm:contact_index")
 
+
+# FUNC カレンダー作成
+def make_dic(select_month):
+    y=int(select_month[:4])
+    m=int(select_month[-2:])
+
+    ins=calendar.monthrange(y,m)
+    last_day=ins[1]
+
+    select_dic={}
+    we_dic={0:"月",1:"火",2:"水",3:"木",4:"金",5:"土",6:"日",}
+    for i in range(1,last_day+1):
+        day=datetime.date(y,m,i)
+        week=we_dic[day.weekday()]
+
+        if jpholiday.is_holiday(day):
+            week_color="2"
+        elif week == "土":
+            week_color="1"
+        elif week == "日":
+            week_color="2"
+        else:
+            week_color="0"
+
+        select_dic[day.strftime("%Y-%m-%d")]={"week":week,"week_color":week_color,"text_all":[]}
+
+    return select_dic
