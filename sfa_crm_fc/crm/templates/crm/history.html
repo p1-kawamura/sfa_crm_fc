@@ -56,8 +56,8 @@
                                 {% if i.cus.mei %}{{i.cus.mei}}{% endif %}
                             </div>
                             <div style="width: 250px; font-size: 0.9em;">最終更新：{{i.cus.update_last_day}}</div>
-                            <div style="width: 100px; font-size: 0.9em;"">受注：{{i.cus.juchu_all}}件</div>
-                            <div style="width: 170px; font-size: 0.9em;"">金額：{{i.cus.juchu_money | intcomma}}円</div> 
+                            <div style="width: 100px; font-size: 0.9em;">受注：{{i.cus.juchu_all}}件</div>
+                            <div style="width: 170px; font-size: 0.9em;">金額：{{i.cus.juchu_money | intcomma}}円</div> 
                             <div>
                                 <button type="button" class="btn btn-outline-secondary btn-sm" style="border-radius: 50%;"  id="modal_{{i.cus.cus_id}}" name="cus_list"
                                     data-bs-toggle="modal" data-bs-target="#modal_cus">

@@ -32,8 +32,10 @@ def index_api(request):
         res=res["estimations"]
         for i in res:
             ins=Sfa_data.objects.filter(mitsu_id=i["id"])
-            if (ins.count()==0 and i["status"]=="終了") or i["customerId"]==None:
-                continue
+
+            # 初回のデータ取得は外しておく（運用開始後は必要）
+            # if (ins.count()==0 and i["status"]=="終了") or i["customerId"]==None:
+            #     continue
             
             # ------------------------
             # 案件
