@@ -34,7 +34,11 @@ def index_api(request):
             ins=Sfa_data.objects.filter(mitsu_id=i["id"])
 
             # 初回のデータ取得は外しておく（運用開始後は必要）
-            # if (ins.count()==0 and i["status"]=="終了") or i["customerId"]==None:
+            if (ins.count()==0 and i["status"]=="終了") or i["customerId"]==None:
+                continue
+
+            # # 初回使用のコード（運用開始後はコメントアウト）
+            # if i["customerId"]==None:
             #     continue
             
             # ------------------------
@@ -628,19 +632,20 @@ def member_add(request):
 # 自由に使うため
 def free(request):
 
-    Sfa_data.objects.all().delete()
-    Customer.objects.all().delete()
-    Crm_action.objects.all().delete()
+    # Sfa_data.objects.all().delete()
+    # Customer.objects.all().delete()
+    # Crm_action.objects.all().delete()
 
 
     # # API時間
     # ins=Member.objects.all()
     # for i in ins:
     #     i.last_api="2025-03-31 00:00:00"
+    #     i.save()
 
 
-    # # 練習削除
-    # Sfa_data.objects.filter(cus_id="").delete()
-    # Customer.objects.get(cus_id="").delete()
+    # 練習削除
+    Sfa_data.objects.filter(cus_id="1297199").delete()
+    Customer.objects.get(cus_id="1297199").delete()
 
     return redirect("sfa:index")
