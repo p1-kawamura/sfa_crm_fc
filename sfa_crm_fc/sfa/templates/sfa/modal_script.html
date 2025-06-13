@@ -36,6 +36,10 @@
                     document.getElementById("modal_mob").innerText=res.tel_mob;
                     document.getElementById("modal_mail").innerText=res.mail;
                     document.getElementById("modal_touroku").innerText=res.cus_touroku;
+                    document.getElementById("modal_est_last").innerHTML=res.update_last_day +
+                        "<span style='font-size:0.9em; margin-left:10px';>（ <a href='" + res.est_last_url + "' target='_blank'>" +
+                        "<span style='color: #008b8b;'><i class='bi bi-box-arrow-up-right'></i></span></a> " +
+                        res.update_last_num + "-" + res.update_last_ver + "　" + res.est_last_status + " ）</span>";
                     document.getElementById("modal_bikou").value=res.remark;
 
                     if (res3.set == 1){

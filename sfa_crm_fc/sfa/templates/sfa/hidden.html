@@ -86,7 +86,7 @@
                         {% endif %}
                     </div>
                     <div style="width: 210px;">{% if h.com %}{{h.com | truncatechars:14}}{% endif %}</div>
-                    <div style="width: 90px;">{% if h.sei %}{{h.sei}}{% endif %} {% if h.mei %}{{h.mei}}{% endif %}</div>
+                    <div style="width: 110px;">{% if h.sei %}{{h.sei}}{% endif %} {% if h.mei %}{{h.mei}}{% endif %}</div>
                     <div style="width: 100px;">{% if h.status %}<span class="order_use">{{h.status}}</span>{% endif %}</div>
                     <div style="width: 150px;">金額：{{h.money | intcomma}}円</div>
                     <div>非表示設定：{{h.hidden_day}}</div>

@@ -338,6 +338,11 @@ def cus_modal_show(request):
     res=requests.get(url)
     res=res.json()
     cus_info["remark"]=res["remark"]
+
+    ins=Customer.objects.get(cus_id=cus_id)
+    ins2=Sfa_data.objects.get(mitsu_num=ins.update_last_num,mitsu_ver=ins.update_last_ver)
+    cus_info["est_last_url"]=ins2.mitsu_url
+    cus_info["est_last_status"]=ins2.status
     
     today=str(date.today())
     ins=list(Crm_action.objects.filter(cus_id=cus_id,type=6,alert_check=0,day__lte=today).values())
