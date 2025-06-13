@@ -41,6 +41,7 @@ def index_api(request):
             # if i["customerId"]==None:
             #     continue
             
+            
             # ------------------------
             # 案件
             # ------------------------
@@ -644,8 +645,8 @@ def free(request):
     #     i.save()
 
 
-    # 練習削除
-    Sfa_data.objects.filter(cus_id="1297199").delete()
-    Customer.objects.get(cus_id="1297199").delete()
+    # # 練習削除
+    # Sfa_data.objects.filter(cus_id="1298419").delete()
+    # Customer.objects.get(cus_id="1298419").delete()
 
     return redirect("sfa:index")
