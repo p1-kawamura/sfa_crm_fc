@@ -623,13 +623,19 @@ def member_add(request):
 # 自由に使うため
 def free(request):
 
-    # ins=Sfa_data.objects.all()
-    # for i in ins:
-    #     i.show=0
-    #     i.save()
-
     Sfa_data.objects.all().delete()
     Customer.objects.all().delete()
     Crm_action.objects.all().delete()
+
+
+    # # API時間
+    # ins=Member.objects.all()
+    # for i in ins:
+    #     i.last_api="2025-03-31 00:00:00"
+
+
+    # # 練習削除
+    # Sfa_data.objects.filter(cus_id="").delete()
+    # Customer.objects.get(cus_id="").delete()
 
     return redirect("sfa:index")
