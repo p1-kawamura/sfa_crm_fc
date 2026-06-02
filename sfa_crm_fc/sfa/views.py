@@ -417,7 +417,12 @@ def modal_act_list(cus_id,modal_sort):
     for i in res:        
         dic={}
         dic["kubun"]="est"
-        dic["day"]=i["firstEstimationDate"]
+        if i["orderReceivedDate"] != None:
+            dic["day"]=i["orderReceivedDate"]
+            dic["day_kubun"]="受注"
+        else:
+            dic["day"]=i["firstEstimationDate"]
+            dic["day_kubun"]="見積"
         dic["est_num"]=i["estimationNumber"] + "-" + str(i["estimationVersion"])
         dic["status"]=i["estimationStatus"]
         dic["money"]=i["totalPrice"]
